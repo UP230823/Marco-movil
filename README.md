@@ -3,7 +3,7 @@
 Backend para administrar productos (CRUD) con **.NET 10**, **Minimal APIs**,
 **ADO.NET** y **MySQL**. Se prueba con **Swagger**.
 
-Autor: Marco Isai Martinez Moreno — UPA, Ingeniería en Sistemas Computacionales, 8C.
+Autor: Luis Fernando Flores Jauregui — UPA, Ingeniería en Sistemas Computacionales, 9C.
 
 ---
 
