@@ -1,0 +1,48 @@
+# ============================================================================
+#  compose.yaml  —  Arrancar MySQL + la API con un solo comando
+# ============================================================================
+#
+#      docker compose up --build
+#
+#  Luego abre http://localhost:5135/swagger
+#  Para detener: Ctrl + C (o `docker compose down`).
+#  Para borrar también los datos guardados: `docker compose down -v`
+# ============================================================================
+
+services:
+  db:
+    image: mysql:8.4
+    container_name: productos-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: productos_db
+    ports:
+      # 3307 afuera para no chocar si ya tienes MySQL instalado en tu PC (3306).
+      - "3307:3306"
+    volumes:
+      - datos-mysql:/var/lib/mysql
+    healthcheck:
+      # La API no arranca hasta que MySQL responda.
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build: .
+    image: productosapi
+    container_name: productosapi
+    ports:
+      - "5135:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      # Sobrescribe la cadena de appsettings.json: dentro de Docker el
+      # servidor se llama "db" (el nombre del servicio de arriba).
+      ConnectionStrings__MySql: "Server=db;Port=3306;Database=productos_db;User ID=root;Password=root;"
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  datos-mysql:

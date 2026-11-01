@@ -1,0 +1,68 @@
+# ============================================================================
+#  ProductosAPI.http  —  Pruebas rápidas sin salir de VS Code
+# ============================================================================
+#  Extensión "REST Client" → botón "Send Request" encima de cada petición.
+#  Los ### separan una petición de otra.
+# ============================================================================
+
+@host = http://localhost:5135
+
+### 1) Mensaje de bienvenida
+GET {{host}}/
+
+### 2) CONEXIÓN — ¿la API llega a MySQL?
+GET {{host}}/conexion
+
+### 3) CONSULTA — todos los productos
+GET {{host}}/productos
+Accept: application/json
+
+### 4) CONSULTA — un producto por Id
+GET {{host}}/productos/1
+
+### 5) Producto que no existe → 404
+GET {{host}}/productos/999
+
+### 6) BUSCAR por texto (nombre o descripción)
+GET {{host}}/productos/buscar?termino=mouse
+
+### 7) BUSCAR por categoría
+GET {{host}}/productos/buscar?categoria=Periféricos
+
+### 8) INSERT — crear producto (el id lo genera MySQL)
+POST {{host}}/productos
+Content-Type: application/json
+
+{
+  "nombre": "Audífonos gamer",
+  "descripcion": "Sonido envolvente 7.1",
+  "categoria": "Audio",
+  "precio": 1299.99,
+  "stock": 12,
+  "activo": true
+}
+
+### 9) INSERT inválido → 400
+POST {{host}}/productos
+Content-Type: application/json
+
+{
+  "nombre": "",
+  "precio": -5
+}
+
+### 10) ACTUALIZAR — producto 1 (se envían TODOS los campos)
+PUT {{host}}/productos/1
+Content-Type: application/json
+
+{
+  "nombre": "Teclado mecánico TKL",
+  "descripcion": "Switches cafés",
+  "categoria": "Periféricos",
+  "precio": 799.00,
+  "stock": 10,
+  "activo": true
+}
+
+### 11) ELIMINAR — producto 2
+DELETE {{host}}/productos/2
